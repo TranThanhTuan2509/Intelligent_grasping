@@ -1,0 +1,1 @@
+I have to remove the object with id = 2, named red car

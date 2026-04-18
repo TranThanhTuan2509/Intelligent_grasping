@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  freegrasp-demo:
+    build: .
+    image: freegrasp-demo:latest
+    container_name: freegrasp-demo
+    env_file:
+      - .env
+    environment:
+      # Uncomment the line below to enable 4-bit mode for GPUs with <16GB VRAM (e.g. RTX 3060)
+      # MOLMO_LOAD_4BIT: "1"
+    ports:
+      - "7860:7860"
+    volumes:
+      # Persist HuggingFace model cache (Molmo 7B ~14GB)
+      - hf_cache:/root/.cache/huggingface
+      # Persist GraspNet checkpoint
+      - ./logs:/app/logs
+      # Persist demo temp output
+      - ./data/demo:/app/data/demo
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+
+volumes:
+  hf_cache:
